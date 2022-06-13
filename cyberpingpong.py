@@ -14,9 +14,24 @@ DELAY_MS = 10
 ws = Rgb(27,WSMAX)  #dev3
 isdisp7 = True
 
-if isdisp7:
-    from display7 import display7init
-    d7 = display7init()
+min_position = 1
+default_min_position = min_position
+max_position = 40
+acceleration = 0.85
+tolerance = 3
+shorten = True
+speedup = True
+boundary_color = (0,50,0)
+score_color = (50,0,0)
+
+button1 = Button(Pin(32, Pin.IN), release_value=1)
+#button2 = Button(Pin(26, Pin.IN), release_value=1)
+
+built_in_led = Pin(2, Pin.OUT)
+
+built_in_led.on()
+sleep_ms(20)
+built_in_led.off()
 
 print("test RGB")
 ws.color((50,0,0),5)
@@ -27,16 +42,9 @@ ws.color((0,0,50),5)
 sleep(0.3)
 ws.color((0,0,0),5)
 
-
-built_in_led = Pin(2, Pin.OUT)
-
-built_in_led.on()
-sleep_ms(20)
-built_in_led.off()
-
-
-button1 = Button(Pin(32, Pin.IN), release_value=1)
-#button2 = Button(Pin(26, Pin.IN), release_value=1)
+if isdisp7:
+    from display7 import display7init
+    d7 = display7init()
 
 @button1.on_release
 def player1():
@@ -56,18 +64,6 @@ def draw(ws, new_position, old_position):
     ball_color = (10,0,50)
     ws.color(ball_color, new_position)
     ws.color((0,0,0), old_position)
-
-
-min_position = 1
-default_min_position = min_position
-max_position = 40
-acceleration = 0.85
-tolerance = 3
-shorten = True
-speedup = True
-boundary_color = (0,50,0)
-score_color = (50,0,0)
-
 
 for i in range(WSMAX):
     ws.color((0,0,0), i)
