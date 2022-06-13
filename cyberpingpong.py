@@ -1,4 +1,4 @@
-# pong1 - single player
+# pong1 - single player - 2022/06
 
 print("-> imports")
 from time import sleep, sleep_ms
@@ -102,6 +102,9 @@ while True:
             d7.show(f"---{score}---")
             
         sleep(5)
+        if isdisp7:
+            d7.show("octopus")
+            
         for i in range(min_position):
             ws.color((0,0,0), default_min_position + i)
         for i in range(score):
