@@ -1,4 +1,5 @@
 # pong2 - two-player game (uPy v1.18 on 2022-06-10: ok)
+# OctopusLAB - big display board & DoIt ESP32
 
 print("-> imports")
 from time import sleep, sleep_ms
@@ -11,7 +12,7 @@ from components.button import Button
 
 WSMAX = 60
 DELAY_MS = 10
-ws = Rgb(27,WSMAX)  #dev3
+ws = Rgb(17,WSMAX)  #dev3
 isdisp7 = True
 
 min_position = 1
@@ -24,8 +25,8 @@ speedup = True
 boundary_color = (0,50,0)
 score_color = (50,0,0)
 
-button1 = Button(Pin(32, Pin.IN), release_value=0) # ok1: release_value=1
-button2 = Button(Pin(26, Pin.IN), release_value=0)
+button1 = Button(Pin(39, Pin.IN), release_value=0) # ok1: release_value=1
+button2 = Button(Pin(27, Pin.IN), release_value=0)
 
 built_in_led = Pin(2, Pin.OUT)
 
