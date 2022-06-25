@@ -1,4 +1,4 @@
-# pong1 - single player
+# pong2 - two-player game (uPy v1.18 on 2022-06-10: ok)
 
 print("-> imports")
 from time import sleep, sleep_ms
