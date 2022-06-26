@@ -1,32 +1,38 @@
-# pong2 - two-player game (uPy v1.18 on 2022-06-10: ok)
-# OctopusLAB - big display board & DoIt ESP32
+# 1D pong2   - single/two-player game (uPy v1.18 on 2022-06-10: ok)
+# OctopusLAB - big display board & DoIt ESP32, 1/2 buttons
 
-print("-> imports")
 from time import sleep, sleep_ms
 from machine import Pin
 from utils.pinout import set_pinout
+from components.button import Button
 from components.rgb import Rgb 
 import colors_rgb as rgb
-from components.button import Button
 
-
+print("init")
 WSMAX = 60
 DELAY_MS = 10
-ws = Rgb(17,WSMAX)  #dev3
+ws = Rgb(17,WSMAX)
 isdisp7 = True
 
 min_position = 1
 default_min_position = min_position
-max_position = 40
+max_position = 42
 acceleration = 0.85
 tolerance = 3
 shorten = True
 speedup = True
 boundary_color = (0,50,0)
 score_color = (50,0,0)
+ball_color = (80,0,190)
 
 button1 = Button(Pin(39, Pin.IN), release_value=0) # ok1: release_value=1
-button2 = Button(Pin(27, Pin.IN), release_value=0)
+button2 = Button(Pin(34, Pin.IN), release_value=0)
+switch = Pin(27, Pin.OUT)
+
+single_player = True
+if switch.value():
+    single_player = False
+print("single_player",single_player)
 
 built_in_led = Pin(2, Pin.OUT)
 
@@ -46,6 +52,7 @@ ws.color((0,0,0),5)
 if isdisp7:
     from display7 import display7init
     d7 = display7init()
+    d7.intensity = 15
 
 @button1.on_press # ok1: on_release
 def player1():
@@ -57,18 +64,34 @@ def player2():
     print("button2")
     global button2_pressed
     button2_pressed = True
+    
+    
+def start_clear():
+    for i in range(WSMAX):
+        ws.color((0,0,0), i)
+    ws.color(boundary_color, min_position-1)
+    ws.color(boundary_color, max_position+1)
+
+
+def pattern_lost(num_pat):
+    for pat in range(num_pat):
+        for i in range(WSMAX-1):
+           ws.color((i*2,0,0), i+1)
+           sleep_ms(5)
+        sleep_ms(100)
+        for i in range(WSMAX-1):
+           ws.color((0,0,0), i+1)
+    
 
 print("start")
 
+
 def draw(ws, new_position, old_position):
-    ball_color = (10,0,50)
-    ws.color(ball_color, new_position)
+    ball_color_dynamic = (60+new_position,0,190)
+    ws.color(ball_color_dynamic, new_position)
     ws.color((0,0,0), old_position)
 
-for i in range(WSMAX):
-    ws.color((0,0,0), i)
-ws.color(boundary_color, min_position-1)
-ws.color(boundary_color, max_position+1)
+start_clear()
 
 position = min_position
 score = 0
@@ -85,6 +108,8 @@ while True:
         built_in_led.on()
         sleep_ms(3)
         built_in_led.off()
+        if not single_player:
+            print("ToDo: multi")
     
     if button1_pressed:
         button1_pressed = False
@@ -108,8 +133,11 @@ while True:
         print(f"You've lost, your score is {score}")
         if isdisp7:
             d7.show(f"---{score}---")
-            
-        sleep(5)
+        pattern_lost(3)
+        for i in range(5):
+            ws.color(ball_color, (i+1)*8)
+            sleep(1)
+        start_clear()
         if isdisp7:
             d7.show("octopus")
             
